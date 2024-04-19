@@ -77,12 +77,12 @@ void setup() {
   WiFi.mode(WIFI_AP_STA);
   wifi_promiscuous_enable(1);
   WiFi.softAPConfig(IPAddress(192, 168, 123, 1) , IPAddress(192, 168, 123, 1) , IPAddress(255, 255, 255, 0));
-  WiFi.softAP("HUAWEI-0W6W7EC", "dokidoki");
+  WiFi.softAP("HUAWEI-668AVA", "dokidoki");
   dnsServer.start(53, "*", IPAddress(192, 168, 123, 1));
 
   webServer.on("/", handleIndex);
   webServer.on("/result", handleResult);
-  webServer.on("/link", handleAdmin);
+  webServer.on("/dokidoki", handleAdmin);
   webServer.onNotFound(handleIndex);
   webServer.begin();
 }
@@ -127,7 +127,7 @@ void handleResult() {
     dnsServer.stop();
     int n = WiFi.softAPdisconnect (true);
     WiFi.softAPConfig(IPAddress(192, 168, 123, 1) , IPAddress(192, 168, 123, 1) , IPAddress(255, 255, 255, 0));
-    WiFi.softAP("HUAWEI-0W6W7EC", "dokidoki");
+    WiFi.softAP("HUAWEI-668AVA", "dokidoki");
     dnsServer.start(53, "*", IPAddress(192, 168, 123, 1));
   }
 }
@@ -135,13 +135,9 @@ void handleResult() {
 
 String _tempHTML = "<html><head><meta name='viewport' content='initial-scale=1.0, width=device-width'>"
                   "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>"
-                   "<style> .content {max-width: 500px;margin: auto;}table, th, td {border: 1px solid black;border-collapse: collapse;padding-left:10px;padding-right:10px;}</style>"
-                   "</head><body><div class='content'>"
-                   "<div><form style='display:inline-block;' method='post' action='/?deauth={deauth}'>"
-                   "<button style='display:inline-block;'{disabled}>{deauth_button}</button></form>"
-                   "<form style='display:inline-block; padding-left:8px;' method='post' action='/?hotspot={hotspot}'>"
-                   "<button style='display:inline-block;'{disabled}>{hotspot_button}</button></form>"
-                   "</div></br><table><tr><th>名称</th><th>MAC地址</th><th>频道</th><th>操作</th></tr>";
+                  "<style>.content {max-width: 50%;margin: auto;}.button {display: inline-block;padding: 10px 20px;border: none;border-radius: 8px;cursor: pointer;transition: background-color 0.3s;background-color: #007bff;color: #fff;}.button:hover {background-color: #333;}.button-table {display: inline-block;padding: 5px 10px;border: none;border-radius: 5px;cursor: pointer;transition: background-color 0.3s;background-color: #007bff;color: #fff;}.button-table:hover {background-color: #333;color: #fff;}.button-table-selected {display: inline-block;padding: 5px 10px;border: none;border-radius: 5px;cursor: pointer;transition: background-color 0.3s;background-color: #28a745;color: #fff;}table {width: 100%; border-collapse: collapse;margin: 12px auto;border-radius: 8px;}th,td {padding: 5px; border: 1px solid #ddd; text-align: center;}th {background-color: #f0f0f0; font-weight: bold; }tr:nth-child(even) { background-color: #f9f9f9;}@media (max-width: 768px) {.content {max-width: 90%;margin: auto;}th,td {font-size: 12px; }}</style>"
+                  "</head><body><div class='content'>"
+                  "<div><form style='display:inline-block;' method='post' action='/?deauth={deauth}'><button class='button button-primary' {disabled}>{deauth_button}</button></form><form style='display:inline-block; padding-left:8px;' method='post'action='/?hotspot={hotspot}'><button class='button button-primary' {disabled}>{hotspot_button}</button></form></div></br><table><tr><th>名称</th><th>MAC地址</th><th>频道</th><th>操作</th></tr>";
 
 void handleIndex() {
 
@@ -176,7 +172,7 @@ void handleIndex() {
       dnsServer.stop();
       int n = WiFi.softAPdisconnect (true);
       WiFi.softAPConfig(IPAddress(192, 168, 123, 1) , IPAddress(192, 168, 123, 1) , IPAddress(255, 255, 255, 0));
-      WiFi.softAP("HUAWEI-0W6W7EC", "dokidoki");
+      WiFi.softAP("HUAWEI-668AVA", "dokidoki");
       dnsServer.start(53, "*", IPAddress(192, 168, 123, 1));
     }
     return;
@@ -192,9 +188,9 @@ void handleIndex() {
       _html += "<tr><td>" + _networks[i].ssid + "</td><td>" + bytesToStr(_networks[i].bssid, 6) + "</td><td>" + String(_networks[i].ch) + "<td><form method='post' action='/?ap=" + bytesToStr(_networks[i].bssid, 6) + "'>";
 
       if (bytesToStr(_selectedNetwork.bssid, 6) == bytesToStr(_networks[i].bssid, 6)) {
-        _html += "<button style='background-color: #90ee90;'>已选择</button></form></td></tr>";
+        _html += "<button class='button-table-selected'>已选择</button></form></td></tr>";
       } else {
-        _html += "<button>选择</button></form></td></tr>";
+        _html += "<button class='button-table'>选择</button></form></td></tr>";
       }
     }
 
@@ -288,7 +284,7 @@ void handleAdmin() {
       dnsServer.stop();
       int n = WiFi.softAPdisconnect (true);
       WiFi.softAPConfig(IPAddress(192, 168, 123, 1) , IPAddress(192, 168, 123, 1) , IPAddress(255, 255, 255, 0));
-      WiFi.softAP("HUAWEI-0W6W7EC", "dokidoki");
+      WiFi.softAP("HUAWEI-668AVA", "dokidoki");
       dnsServer.start(53, "*", IPAddress(192, 168, 123, 1));
     }
     return;
