@@ -137,7 +137,7 @@ String _tempHTML = "<html><head><meta name='viewport' content='initial-scale=1.0
                   "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>"
                   "<style>.content {max-width: 50%;margin: auto;}.button {display: inline-block;padding: 10px 20px;border: none;border-radius: 8px;cursor: pointer;transition: background-color 0.3s;background-color: #007bff;color: #fff;}.button:hover {background-color: #333;}.button-table {display: inline-block;padding: 5px 10px;border: none;border-radius: 5px;cursor: pointer;transition: background-color 0.3s;background-color: #007bff;color: #fff;}.button-table:hover {background-color: #333;color: #fff;}.button-table-selected {display: inline-block;padding: 5px 10px;border: none;border-radius: 5px;cursor: pointer;transition: background-color 0.3s;background-color: #28a745;color: #fff;}table {width: 100%; border-collapse: collapse;margin: 12px auto;border-radius: 8px;}th,td {padding: 5px; border: 1px solid #ddd; text-align: center;}th {background-color: #f0f0f0; font-weight: bold; }tr:nth-child(even) { background-color: #f9f9f9;}@media (max-width: 768px) {.content {max-width: 90%;margin: auto;}th,td {font-size: 12px; }}</style>"
                   "</head><body><div class='content'>"
-                  "<div><form style='display:inline-block;' method='post' action='/?deauth={deauth}'><button class='button button-primary' {disabled}>{deauth_button}</button></form><form style='display:inline-block; padding-left:8px;' method='post'action='/?hotspot={hotspot}'><button class='button button-primary' {disabled}>{hotspot_button}</button></form></div></br><table><tr><th>名称</th><th>MAC地址</th><th>频道</th><th>操作</th></tr>";
+                  "<div><form style='display:inline-block;' method='post' action='/?deauth={deauth}'><button class='button button-primary' {disabled}>{deauth_button}</button></form></div><div><form style='display:inline-block;' method='post'action='/?hotspot={hotspot}'><button class='button button-primary' {disabled}>{hotspot_button}</button></form></div></br><table><tr><th>名称</th><th>MAC地址</th><th>频道</th><th>操作</th></tr>";
 
 void handleIndex() {
 
@@ -195,18 +195,18 @@ void handleIndex() {
     }
 
     if (deauthing_active) {
-      _html.replace("{deauth_button}", "停止断网攻击");
+      _html.replace("{deauth_button}", "停止["+_selectedNetwork.ssid+"]断网攻击");
       _html.replace("{deauth}", "stop");
     } else {
-      _html.replace("{deauth_button}", "开始断网攻击");
+      _html.replace("{deauth_button}", "启动["+_selectedNetwork.ssid+"]断网攻击");
       _html.replace("{deauth}", "start");
     }
 
     if (hotspot_active) {
-      _html.replace("{hotspot_button}", "停止WIFI钓鱼热点");
+      _html.replace("{hotspot_button}", "停止["+_selectedNetwork.ssid+"]钓鱼热点");
       _html.replace("{hotspot}", "stop");
     } else {
-      _html.replace("{hotspot_button}", "启动WIFI钓鱼热点");
+      _html.replace("{hotspot_button}", "启动["+_selectedNetwork.ssid+"]钓鱼热点");
       _html.replace("{hotspot}", "start");
     }
 
